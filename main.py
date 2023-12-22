@@ -48,6 +48,24 @@ def save():
             entry_password.delete(0, END)
 
 
+# ---------------------------- SEARCH FUNCTIONALITY ------------------------------- #
+def search():
+    query = entry_website.get()
+    try:
+        with open("data.json", "r") as password_file:
+            data = json.load(password_file)
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
+        print("the file you are looking for does not exist")
+    else:
+
+        if query in data:
+            found_data = data[query]
+            messagebox.showinfo(title=query,
+                                message=f"Email: {found_data["email"]} \n Password: {found_data["password"]}")
+        else:
+            messagebox.showerror(title=query, message=f"Could not find `{query}` in the list of passwords")
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     small_letters = ["a", "b", "c", "d", "e", "f",
@@ -113,5 +131,8 @@ generate_btn.grid(column=2, row=3, sticky="EW")
 
 add_btn = Button(text="Add", width=35, command=save)
 add_btn.grid(column=1, row=4, columnspan=2, sticky="EW")
+
+search_btn = Button(text="Search", command=search)
+search_btn.grid(column=2, row=1, sticky="EW")
 
 mainloop()
