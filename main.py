@@ -1,3 +1,4 @@
+import json
 from random import randint, choice, shuffle
 from tkinter import *
 from tkinter import messagebox
@@ -11,17 +12,40 @@ def save():
     email = entry_email_uname.get()
     password = entry_password.get()
 
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
+
     if len(website) == 0 or len(password) == 0:
         messagebox.showinfo(title="Warning!", message="No fields should be left empty")
     else:
-        is_okay = messagebox.askokcancel(title=website,
-                                         message=f"These are the details entered: \nEmail: {email} "
-                                                 f"\nPassword: {password} \n Website: {website} \n Is it okay to save?")
-        if is_okay:
-            with open("data.txt", "a") as password_file:
-                password_file.write(f"{website} | {email} | {password}\n")
-                entry_website.delete(0, END)
-                entry_password.delete(0, END)
+        try:
+            print("HERRE ")
+
+            with open("data.json", "r") as password_file:
+                # Read File
+                data = json.load(password_file)
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+
+            with open("data.json", "w") as password_file:
+                # Save updated data
+                json.dump(new_data, password_file, indent=4)
+        else:
+            print("HERRE 2")
+
+            # Update File
+            data.update(new_data)
+            with open("data.json", "w") as password_file:
+                # Save updated data
+                json.dump(data, password_file, indent=4)
+        finally:
+            print("HERRE 3")
+
+            entry_website.delete(0, END)
+            entry_password.delete(0, END)
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
